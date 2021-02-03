@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="PlayerTracker:jar">
-    <output-path>$PROJECT_DIR$/../../../../MinecraftServers/Paper-1.16.5/plugins</output-path>
-    <root id="archive" name="PlayerTracker.jar">
-      <element id="module-output" name="PlayerTracker" />
-    </root>
-  </artifact>
-</component>
