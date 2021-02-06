@@ -17,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin implements Listener {
     
     private static Main plugin;
-    private final String syntaxError = ChatColor.RED + "Syntax: /track <player>";
+    private final String syntaxError = ChatColor.RED + "Syntax: /track or /track <player>";
     
     public static Main getPlugin() {
         return plugin;
@@ -56,7 +56,9 @@ public class Main extends JavaPlugin implements Listener {
             } catch (NullPointerException exception) {
                 player.sendMessage(ChatColor.RED + "Could not find that player.");
             }
-            
+    
+        } else if (label.equalsIgnoreCase("help")) {
+            sender.sendMessage(syntaxError);
         } else {
             sender.sendMessage(syntaxError);
         }
@@ -69,14 +71,13 @@ public class Main extends JavaPlugin implements Listener {
     public void playerInteract(PlayerInteractEvent event) {
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
             
-            Player player = event.getPlayer();
-            
             if (event.hasItem() && event.getMaterial() == Material.COMPASS && event.getItem().getItemMeta().getDisplayName().contains("Tracker")) {
                 CompassMeta compassMeta = (CompassMeta) event.getItem().getItemMeta();
                 PersistentDataContainer data = compassMeta.getPersistentDataContainer();
+                Player player = event.getPlayer();
                 
-                if (data.has(new NamespacedKey(plugin, "player"), PersistentDataType.STRING)) {
-                    Player tracked = Bukkit.getPlayerExact(data.get(new NamespacedKey(plugin, "player"), PersistentDataType.STRING));
+                if (data.has(new NamespacedKey(this, "player"), PersistentDataType.STRING)) {
+                    Player tracked = Bukkit.getPlayerExact(data.get(new NamespacedKey(this, "player"), PersistentDataType.STRING));
                     
                     if (tracked != null && tracked.isOnline()) {
                         compassMeta.setLodestone(tracked.getLocation());
@@ -89,7 +90,6 @@ public class Main extends JavaPlugin implements Listener {
                     }
                     
                 } else {
-                    System.out.println("else");
                     player.sendMessage(ChatColor.RED + "For whatever reason we can't find who to track. Please run /track again.");
                 }
             }
@@ -102,7 +102,7 @@ public class Main extends JavaPlugin implements Listener {
         CompassMeta compassMeta = (CompassMeta) compassItem.getItemMeta();
         
         PersistentDataContainer data = compassMeta.getPersistentDataContainer();
-        data.set(new NamespacedKey(plugin, "player"), PersistentDataType.STRING, tracked.getName());
+        data.set(new NamespacedKey(this, "player"), PersistentDataType.STRING, tracked.getName());
         
         compassMeta.setLodestoneTracked(false);
         compassMeta.setLodestone(tracked.getLocation());
