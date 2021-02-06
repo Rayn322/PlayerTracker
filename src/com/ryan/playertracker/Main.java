@@ -42,7 +42,7 @@ public class Main extends JavaPlugin implements Listener {
             return true;
         }
         
-        // makes sure it doesn't crash if there are no args.
+        // makes sure it doesn't crash if there are no args
         if (args.length == 0) {
             Player player = (Player) sender;
             GUIHandler.openGUI(player);
@@ -52,11 +52,11 @@ public class Main extends JavaPlugin implements Listener {
         if (label.equalsIgnoreCase("track")) {
             Player player = (Player) sender;
             try {
-                giveCompass(player, Bukkit.getPlayer(args[0]));
+                giveCompass(player, Bukkit.getPlayerExact(args[0]));
             } catch (NullPointerException exception) {
                 player.sendMessage(ChatColor.RED + "Could not find that player.");
             }
-    
+            
         } else if (label.equalsIgnoreCase("help")) {
             sender.sendMessage(syntaxError);
         } else {
@@ -66,7 +66,7 @@ public class Main extends JavaPlugin implements Listener {
         return true;
     }
     
-    
+    // updates the compass when it is right clicked
     @EventHandler
     public void playerInteract(PlayerInteractEvent event) {
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
@@ -96,11 +96,13 @@ public class Main extends JavaPlugin implements Listener {
         }
     }
     
+    // gets a compass with data to keep track of the player to be tracked
     private ItemStack getCompass(Player tracked) {
         
         ItemStack compassItem = new ItemStack(Material.COMPASS);
         CompassMeta compassMeta = (CompassMeta) compassItem.getItemMeta();
         
+        // TODO: switch to using uuids?
         PersistentDataContainer data = compassMeta.getPersistentDataContainer();
         data.set(new NamespacedKey(this, "player"), PersistentDataType.STRING, tracked.getName());
         
@@ -112,6 +114,7 @@ public class Main extends JavaPlugin implements Listener {
         return compassItem;
     }
     
+    // gives the compass to the player
     public void giveCompass(Player tracker, Player tracked) {
         System.out.println("[Player Tracker] " + tracker.getDisplayName() + " is now tracking " + tracked.getDisplayName());
         

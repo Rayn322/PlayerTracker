@@ -16,11 +16,11 @@ public class GUIHandler implements Listener {
     
     private static final String guiName = "Who would you like to track?";
     
-    
     public static void openGUI(Player player) {
         int playerAmount = player.getWorld().getPlayers().size();
         int guiSize;
         
+        // sets gui to the correct multiple of 9
         if (playerAmount <= 9) {
             guiSize = 9;
         } else if (playerAmount <= 18) {
@@ -40,6 +40,7 @@ public class GUIHandler implements Listener {
         
         Inventory gui = Bukkit.createInventory(player, guiSize, guiName);
         
+        // creates a new player head and puts it in the gui
         for (int i = 0; i < playerAmount; i++) {
             Player playerI = player.getWorld().getPlayers().get(i);
             
@@ -54,14 +55,15 @@ public class GUIHandler implements Listener {
         player.openInventory(gui);
     }
     
+    // attempts to cancel the click so no items are lost or gained and fails miserably.
     @EventHandler
     public static void onMenuClick(InventoryClickEvent event) {
         if (event.getView().getTitle().equalsIgnoreCase(guiName) && event.getCurrentItem() != null) {
             Player player = (Player) event.getWhoClicked();
             event.setCancelled(true);
             player.closeInventory();
+            
             if (event.getClickedInventory().getType() == InventoryType.CHEST) {
-    
                 try {
                     Player clickedPlayer = Bukkit.getPlayerExact(event.getCurrentItem().getItemMeta().getDisplayName());
                     Main.getPlugin().giveCompass(player, clickedPlayer);
