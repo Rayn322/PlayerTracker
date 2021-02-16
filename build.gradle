@@ -31,8 +31,3 @@ processResources {
         filter ReplaceTokens, tokens: [version: version]
     }
 }
-
-task copyJar(type: Copy) {
-    from file("${buildDir}/libs/playertracker-1.0.jar")
-    into file("C:/Users/Ryan/Documents/MinecraftServers/Paper-1.16.5/plugins")
-}
