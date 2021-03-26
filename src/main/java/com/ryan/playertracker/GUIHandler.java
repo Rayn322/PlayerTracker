@@ -41,8 +41,7 @@ public class GUIHandler implements Listener {
         Inventory gui = Bukkit.createInventory(player, guiSize, guiName);
         
         // creates a new player head and puts it in the gui
-        for (int i = 0; i < playerAmount; i++) {
-            Player playerI = player.getWorld().getPlayers().get(i);
+        for (Player playerI : player.getWorld().getPlayers()) {
             
             ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
             SkullMeta headMeta = (SkullMeta) head.getItemMeta();
