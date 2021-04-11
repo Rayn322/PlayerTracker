@@ -1,5 +1,7 @@
 package com.ryan.playertracker;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -71,7 +73,11 @@ public class Main extends JavaPlugin implements Listener {
     public void playerInteract(PlayerInteractEvent event) {
         if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
             
-            if (event.hasItem() && event.getMaterial() == Material.COMPASS && event.getItem().getItemMeta().getDisplayName().contains("Tracker")) {
+            if (!event.hasItem() || !event.getItem().getItemMeta().hasDisplayName()) {
+                return;
+            }
+            
+            if (event.getMaterial() == Material.COMPASS && PlainComponentSerializer.plain().serialize(event.getItem().getItemMeta().displayName()).contains("Tracker")) {
                 CompassMeta compassMeta = (CompassMeta) event.getItem().getItemMeta();
                 PersistentDataContainer data = compassMeta.getPersistentDataContainer();
                 Player player = event.getPlayer();
@@ -82,7 +88,7 @@ public class Main extends JavaPlugin implements Listener {
                     if (tracked != null && tracked.isOnline()) {
                         compassMeta.setLodestone(tracked.getLocation());
                         event.getItem().setItemMeta(compassMeta);
-                        player.sendMessage(ChatColor.GREEN + "Updated location of " + tracked.getDisplayName());
+                        player.sendMessage(ChatColor.GREEN + "Updated location of " + PlainComponentSerializer.plain().serialize(tracked.displayName()));
                     } else if (tracked != null && !tracked.isOnline()) {
                         player.sendMessage(ChatColor.RED + "That player is offline!.");
                     } else {
@@ -108,7 +114,7 @@ public class Main extends JavaPlugin implements Listener {
         
         compassMeta.setLodestoneTracked(false);
         compassMeta.setLodestone(tracked.getLocation());
-        compassMeta.setDisplayName(tracked.getDisplayName() + " Tracker");
+        compassMeta.displayName(Component.text(tracked.getName() + " Tracker"));
         compassItem.setItemMeta(compassMeta);
         
         return compassItem;
@@ -116,7 +122,7 @@ public class Main extends JavaPlugin implements Listener {
     
     // gives the compass to the player
     public void giveCompass(Player tracker, Player tracked) {
-        System.out.println("[Player Tracker] " + tracker.getDisplayName() + " is now tracking " + tracked.getDisplayName());
+        System.out.println("[Player Tracker] " + tracker.getName() + " is now tracking " + tracked.getName());
         
         if (tracker.getInventory().firstEmpty() == -1) {
             Location location = tracker.getLocation();
@@ -128,6 +134,6 @@ public class Main extends JavaPlugin implements Listener {
             tracker.getInventory().addItem(getCompass(tracked));
         }
         
-        tracker.sendMessage(ChatColor.GREEN + "Now tracking " + tracked.getDisplayName());
+        tracker.sendMessage(ChatColor.GREEN + "Now tracking " + tracked.getName());
     }
 }

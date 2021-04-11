@@ -1,5 +1,7 @@
 package com.ryan.playertracker;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -14,7 +16,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 public class GUIHandler implements Listener {
     
-    private static final String guiName = "Who would you like to track?";
+    private static final Component guiName = Component.text("Who would you like to track?");
     
     public static void openGUI(Player player) {
         int playerAmount = player.getWorld().getPlayers().size();
@@ -45,7 +47,8 @@ public class GUIHandler implements Listener {
             
             ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
             SkullMeta headMeta = (SkullMeta) head.getItemMeta();
-            headMeta.setDisplayName(playerI.getName());
+            
+            headMeta.displayName(Component.text(playerI.getName()));
             headMeta.setOwningPlayer(playerI);
             head.setItemMeta(headMeta);
             gui.addItem(head);
@@ -57,14 +60,14 @@ public class GUIHandler implements Listener {
     // attempts to cancel the click so no items are lost or gained and fails miserably.
     @EventHandler
     public static void onMenuClick(InventoryClickEvent event) {
-        if (event.getView().getTitle().equalsIgnoreCase(guiName) && event.getCurrentItem() != null) {
+        if (event.getView().title() == guiName && event.getCurrentItem() != null) {
             Player player = (Player) event.getWhoClicked();
             event.setCancelled(true);
             player.closeInventory();
             
-            if (event.getClickedInventory().getType() == InventoryType.CHEST) {
+            if (event.getClickedInventory().getType() == InventoryType.CHEST && event.getCurrentItem().getItemMeta().hasDisplayName()) {
                 try {
-                    Player clickedPlayer = Bukkit.getPlayerExact(event.getCurrentItem().getItemMeta().getDisplayName());
+                    Player clickedPlayer = Bukkit.getPlayerExact(PlainComponentSerializer.plain().serialize(event.getCurrentItem().getItemMeta().displayName()));
                     Main.getPlugin().giveCompass(player, clickedPlayer);
                 } catch (NullPointerException exception) {
                     player.sendMessage(ChatColor.RED + "That player could not be found");
