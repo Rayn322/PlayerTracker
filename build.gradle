@@ -34,5 +34,5 @@ processResources {
 
 task copyJar(type: Copy) {
     from file("${buildDir}/libs/PlayerTracker-1.0.jar")
-    into file("C:/Users/Ryan/Documents/MinecraftServers/Paper-1.16.5/plugins")
+    into file("C:/Users/Ryan/Documents/MinecraftServers/Games/plugins")
 }

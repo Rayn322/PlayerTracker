@@ -16,6 +16,8 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.logging.Level;
+
 public class Main extends JavaPlugin implements Listener {
     
     private static Main plugin;
@@ -77,13 +79,18 @@ public class Main extends JavaPlugin implements Listener {
                 return;
             }
             
-            if (event.getMaterial() == Material.COMPASS && PlainComponentSerializer.plain().serialize(event.getItem().getItemMeta().displayName()).contains("Tracker")) {
+            Component displayName = event.getItem().getItemMeta().displayName();
+            
+            // Convert displayName to string and then check if it contains "tracker"
+            if (event.getMaterial() == Material.COMPASS && PlainComponentSerializer.plain().serialize(displayName).contains("Tracker")) {
                 CompassMeta compassMeta = (CompassMeta) event.getItem().getItemMeta();
                 PersistentDataContainer data = compassMeta.getPersistentDataContainer();
                 Player player = event.getPlayer();
+                NamespacedKey key = new NamespacedKey(this, "player");
                 
-                if (data.has(new NamespacedKey(this, "player"), PersistentDataType.STRING)) {
-                    Player tracked = Bukkit.getPlayerExact(data.get(new NamespacedKey(this, "player"), PersistentDataType.STRING));
+                // Check if it has a player name stored in case it got renamed with an anvil
+                if (data.has(key, PersistentDataType.STRING)) {
+                    Player tracked = Bukkit.getPlayerExact(data.get(key, PersistentDataType.STRING));
                     
                     if (tracked != null && tracked.isOnline()) {
                         compassMeta.setLodestone(tracked.getLocation());
@@ -94,7 +101,6 @@ public class Main extends JavaPlugin implements Listener {
                     } else {
                         player.sendMessage(ChatColor.RED + "That player couldn't be found!");
                     }
-                    
                 } else {
                     player.sendMessage(ChatColor.RED + "For whatever reason we can't find who to track. Please run /track again.");
                 }
@@ -122,12 +128,11 @@ public class Main extends JavaPlugin implements Listener {
     
     // gives the compass to the player
     public void giveCompass(Player tracker, Player tracked) {
-        System.out.println("[Player Tracker] " + tracker.getName() + " is now tracking " + tracked.getName());
+        getLogger().log(Level.INFO, tracker.getName() + " is now tracking " + tracked.getName());
         
         if (tracker.getInventory().firstEmpty() == -1) {
             Location location = tracker.getLocation();
             World world = tracker.getWorld();
-            
             world.dropItemNaturally(location, getCompass(tracked));
             
         } else {
