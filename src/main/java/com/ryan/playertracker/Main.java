@@ -114,7 +114,6 @@ public class Main extends JavaPlugin implements Listener {
         ItemStack compassItem = new ItemStack(Material.COMPASS);
         CompassMeta compassMeta = (CompassMeta) compassItem.getItemMeta();
         
-        // TODO: switch to using uuids?
         PersistentDataContainer data = compassMeta.getPersistentDataContainer();
         data.set(new NamespacedKey(this, "player"), PersistentDataType.STRING, tracked.getName());
         
