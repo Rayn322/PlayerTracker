@@ -1,7 +1,7 @@
 package com.ryan.playertracker;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -67,7 +67,7 @@ public class GUIHandler implements Listener {
             
             if (event.getClickedInventory().getType() == InventoryType.CHEST && event.getCurrentItem().getItemMeta().hasDisplayName()) {
                 try {
-                    Player clickedPlayer = Bukkit.getPlayerExact(PlainComponentSerializer.plain().serialize(event.getCurrentItem().getItemMeta().displayName()));
+                    Player clickedPlayer = Bukkit.getPlayerExact(PlainTextComponentSerializer.plainText().serialize(event.getCurrentItem().getItemMeta().displayName()));
                     Main.getPlugin().giveCompass(player, clickedPlayer);
                 } catch (NullPointerException exception) {
                     player.sendMessage(ChatColor.RED + "That player could not be found");

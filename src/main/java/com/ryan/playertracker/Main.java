@@ -1,7 +1,7 @@
 package com.ryan.playertracker;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.logging.Level;
 
@@ -39,7 +40,7 @@ public class Main extends JavaPlugin implements Listener {
     }
     
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         
         if (!(sender instanceof Player)) {
             sender.sendMessage("This command is only for players!");
@@ -82,7 +83,7 @@ public class Main extends JavaPlugin implements Listener {
             Component displayName = event.getItem().getItemMeta().displayName();
             
             // Convert displayName to string and then check if it contains "tracker"
-            if (event.getMaterial() == Material.COMPASS && PlainComponentSerializer.plain().serialize(displayName).contains("Tracker")) {
+            if (event.getMaterial() == Material.COMPASS && PlainTextComponentSerializer.plainText().serialize(displayName).contains("Tracker")) {
                 CompassMeta compassMeta = (CompassMeta) event.getItem().getItemMeta();
                 PersistentDataContainer data = compassMeta.getPersistentDataContainer();
                 Player player = event.getPlayer();
@@ -95,7 +96,7 @@ public class Main extends JavaPlugin implements Listener {
                     if (tracked != null && tracked.isOnline()) {
                         compassMeta.setLodestone(tracked.getLocation());
                         event.getItem().setItemMeta(compassMeta);
-                        player.sendMessage(ChatColor.GREEN + "Updated location of " + PlainComponentSerializer.plain().serialize(tracked.displayName()));
+                        player.sendMessage(ChatColor.GREEN + "Updated location of " + PlainTextComponentSerializer.plainText().serialize(tracked.displayName()));
                     } else if (tracked != null && !tracked.isOnline()) {
                         player.sendMessage(ChatColor.RED + "That player is offline!.");
                     } else {

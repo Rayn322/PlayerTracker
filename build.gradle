@@ -7,8 +7,8 @@ plugins {
 group = 'com.ryan'
 version = '1.0'
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+sourceCompatibility = '1.16'
+targetCompatibility = '1.16'
 
 repositories {
     mavenCentral()
@@ -23,16 +23,18 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.17-R0.1-SNAPSHOT'
 }
 
 processResources {
+    setDuplicatesStrategy(DuplicatesStrategy.INCLUDE)
     from(sourceSets.main.resources.srcDirs) {
         filter ReplaceTokens, tokens: [version: version]
     }
 }
 
 task copyJar(type: Copy) {
+    dependsOn(build)
     from file("${buildDir}/libs/PlayerTracker-1.0.jar")
     into file("C:/Users/Ryan/Documents/MinecraftServers/Games/plugins")
 }
